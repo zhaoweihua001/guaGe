@@ -1,0 +1,12 @@
+{
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "javascript.preferences.quoteStyle": "double",
+
+  // 尝试关闭智能选择（部分版本支持）
+  "typescript.experimental.smartSelection": false,
+  "javascript.experimental.smartSelection": false,
+
+  // 新增：禁用语义高亮相关的交互增强
+  "typescript.suggest.enabled": true,
+  "javascript.suggest.enabled": true
+}
