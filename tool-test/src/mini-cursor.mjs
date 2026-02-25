@@ -70,6 +70,7 @@ async function runAgentWithTools(query, maxIterations = 30) {
                 }));
             }
         }
+        // console.log('当前的message：', messages);
     }
 
     return messages[messages.length - 1].content;

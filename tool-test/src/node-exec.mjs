@@ -14,15 +14,14 @@ import { spawn } from 'node:child_process';
 //   stdio: 'inherit', // 实时输出到控制台（继承父进程的 stdin, stdout, stderr）
 //   // shell: true, // 使用 shell 执行命令
 // });
-
-const command = '"n`nn`n" | pnpm create vite react-todo-app --template react-ts';
+const POWERSHELL_PATH = 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe';
+const command = `"n\`nn\`n" | pnpm create vite react-todo-app --template react-ts`;
 // 获取当前工作目录
 const cwd = process.cwd();
 // 使用 spawn 创建子进程执行命令
-const child = spawn(command, {
-  cwd, // 设置子进程的工作目录
-  stdio: 'inherit', // 实时输出到控制台（继承父进程的 stdin, stdout, stderr）
-  shell: 'powershell.exe'// 从 Node.js 18.17.0 和 20.0.0 开始，spawn 的 shell 选项可以传字符串
+const child = spawn(POWERSHELL_PATH, ['-NoProfile', '-Command', command], {
+  cwd,
+  stdio: 'inherit'  // 继承父进程的 stdin/stdout/stderr
 });
 
 // 用于存储错误信息
