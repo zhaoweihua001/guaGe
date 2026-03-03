@@ -4,8 +4,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .DS_Store
-.env.local
+
+# Env files (repo-wide)
 .env
+.env.*
+!.env.example
+.env.local
 dist/
 build/
 coverage/

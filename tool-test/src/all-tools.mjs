@@ -50,47 +50,68 @@ const writeFileTool = tool(
 );
 
 // 3. 执行命令工具（带实时输出）
-const executeCommandTool = tool(
-async ({ command, workingDirectory }) => {
-    const cwd = workingDirectory || process.cwd();
-    console.log(`  [工具调用] execute_command("${command}")${workingDirectory ? ` - 工作目录: ${workingDirectory}` : ''}`);
+const executeCommandTool = tool(
+  async ({ command, workingDirectory }) => {
+    const cwd = workingDirectory || process.cwd();
 
-    return new Promise((resolve, reject) => {
+    console.log(
+      `  [工具调用] execute_command("${command}")${
+        workingDirectory ? ` - 工作目录: ${workingDirectory}` : ''
+      }`
+    );
 
-      const child = spawn(command, {
-        cwd,
-        stdio: 'inherit', // 实时输出到控制台
-        shell: 'powershell.exe',
-      });
+    return new Promise((resolve) => {
+      // Windows 固定使用 PowerShell
+      const child = spawn(
+        'powershell.exe',
+        ['-NoProfile', '-Command', command],
+        {
+          cwd,
+          env: process.env, // 关键：继承当前环境变量（包含 pnpm）
+          stdio: ['ignore', 'pipe', 'pipe'], // 捕获输出
+        }
+      );
 
-      let errorMsg = '';
+      let stdout = '';
+      let stderr = '';
 
-      child.on('error', (error) => {
-        errorMsg = error.message;
-      });
+      // 实时输出 stdout
+      child.stdout.on('data', (data) => {
+        const text = data.toString();
+        stdout += text;
+        process.stdout.write(text);
+      });
 
-      child.on('close', (code) => {
-        if (code === 0) {
-          console.log(`  [工具调用] execute_command("${command}") - 执行成功`);
-          const cwdInfo = workingDirectory
-            ? `\n\n重要提示：命令在目录 "${workingDirectory}" 中执行成功。如果需要在这个项目目录中继续执行命令，请使用 workingDirectory: "${workingDirectory}" 参数，不要使用 cd 命令。`
-            : '';
-          resolve(`命令执行成功: ${command}${cwdInfo}`);
-        } else {
-          console.log(`  [工具调用] execute_command("${command}") - 执行失败，退出码: ${code}`);
-          resolve(`命令执行失败，退出码: ${code}${errorMsg ? '\n错误: ' + errorMsg : ''}`);
-        }
-      });
-    });
-  },
-  {
-    name: 'execute_command',
-    description: '执行系统命令，支持指定工作目录，实时显示输出',
-    schema: z.object({
-      command: z.string().describe('要执行的命令'),
-      workingDirectory: z.string().optional().describe('工作目录（推荐指定）'),
-    }),
-  }
+      // 实时输出 stderr
+      child.stderr.on('data', (data) => {
+        const text = data.toString();
+        stderr += text;
+        process.stderr.write(text);
+      });
+
+      child.on('error', (error) => {
+        resolve(`命令执行错误: ${error.message}`);
+      });
+
+      child.on('close', (code) => {
+        if (code === 0) {
+          resolve(`命令执行成功:\n${stdout}`);
+        } else {
+          resolve(
+            `命令执行失败 (退出码 ${code}):\n${stderr || stdout}`
+          );
+        }
+      });
+    });
+  },
+  {
+    name: 'execute_command',
+    description: '在 Windows PowerShell 中执行系统命令，支持指定工作目录',
+    schema: z.object({
+      command: z.string().describe('要执行的命令'),
+      workingDirectory: z.string().optional().describe('工作目录'),
+    }),
+  }
 );
 
 // 4. 列出目录内容工具
