@@ -1,0 +1,8 @@
+{
+	"dependencies": {
+		"@langchain/core": "^1.2.1",
+		"@langchain/openai": "^1.5.3",
+		"@nestjs/config": "^4.0.4",
+		"@nestjs/mapped-types": "*"
+	}
+}
