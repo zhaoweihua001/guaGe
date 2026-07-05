@@ -1,0 +1,33 @@
+{
+	"name": "output-parser-mcp",
+	"version": "1.0.0",
+	"description": "MCP工具：结构化输出和流式调用服务",
+	"type": "module",
+	"main": "src/mcp-server.js",
+	"bin": {
+		"output-parser-mcp": "src/mcp-server.js"
+	},
+	"scripts": {
+		"start": "node src/mcp-server.js",
+		"test": "node src/enhanced-demo.mjs"
+	},
+	"dependencies": {
+		"@langchain/core": "^1.1.17",
+		"@langchain/openai": "^1.2.3",
+		"@modelcontextprotocol/sdk": "^1.0.0",
+		"chalk": "^5.6.2",
+		"dotenv": "^17.2.3",
+		"mysql2": "^3.17.0",
+		"zod": "^4.3.6",
+		"zod-to-json-schema": "^3.25.1"
+	},
+	"keywords": [
+		"mcp",
+		"langchain",
+		"structured-output",
+		"streaming",
+		"ai"
+	],
+	"author": "Your Name",
+	"license": "MIT"
+}
